@@ -8,9 +8,8 @@ Created on Wed Oct  6 02:15:50 2021
 
 import gitwrapper
 import json
-import os
 import io, sys
-
+import datetime
 
 #CONFIGURATION
 konopas_id='msid_0'
@@ -26,19 +25,16 @@ configured=False
 def main():
     token,headers=gitwrapper.login()
     get_konop_config(token,headers,path_filename)
+    data=dict()
     print(konopas_modules)
     path="modules/"
     for task in range(len(konopas_modules)):
         filename=konopas_modules[task]+".py"
-        print("==========================================")
-        print("\n"+filename+"\n")
         filepathname=path+filename
         resp,content=gitwrapper.get_file_contents(token,headers,filepathname)
         print(content)
         gitwrapper.write_to_file(filename,content) #writes to current directory
-        #module=filename.strip(".py")
-        #print(module)
-        
+        module=filename.strip(".py")
         
         #keep a named handle on the prior stdout 
         old_stdout = sys.stdout 
@@ -53,9 +49,17 @@ def main():
 
         #put stdout back to normal 
         sys.stdout = old_stdout 
- 
-        print("result of "+filename+" is: '" + str(result) + "'") 
-
+        
+        #store result-data to data dictionary
+        data[module]=str(result)
+        #print("result of "+filename+" is: '" + str(result) + "'") 
+    time = str(datetime.datetime.now())
+    datapathfile="data/"+konopas_id+time+".txt"
+    
+    commit="Stored "+konopas_id+" work to data..."
+    content=json.dumps(data)
+    gitwrapper.store_to_file(token,headers,datapathfile,commit,content)
+    #print(resp2) #always print responses to identify the bugs during debugging.They print errors. 
         
 
 def get_konop_config(token,headers,path_filename):
@@ -69,7 +73,6 @@ def get_konop_config(token,headers,path_filename):
     for task in config:
             #print(task['module'])
             konopas_modules.append(task['module'])
-            #exec("import %s" % task['module'])
     return config
 
 
