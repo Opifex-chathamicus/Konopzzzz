@@ -9,7 +9,7 @@ import gitwrapper
 import json
 import sys
 import datetime
-import io
+import types
 
 #configuration path
 cpath="config/"
@@ -50,29 +50,21 @@ class Konops :
         for task in range(len(self.konops_modules)):
             filename=self.konops_modules[task]+".py"
             filepathname=mpath+filename
+            modulename=filename.strip(".py")
             #Get module file content
             resp,content=gitwrapper.get_file_contents(self.token,self.headers,filepathname)
-            #print(content)
-            gitwrapper.write_to_file(filename,content) #writes module's soruce code to current directory
-            #keep a named handle on the prior stdout 
-            old_stdout = sys.stdout 
-            #keep a named handle on io.StringIO() buffer 
-            new_stdout = io.StringIO() 
-            #Redirect python stdout into the builtin io.StringIO() buffer 
-            sys.stdout = new_stdout 
-            exec(open(filename).read())
-            #stdout from mycode is read into a variable
-            result = sys.stdout.getvalue().strip()
-            #put stdout back to normal 
-            sys.stdout = old_stdout         
-            #store result-data to data dictionary
-            module=filename.strip(".py")
-            data[module]=str(result)
-            #print("result of "+filename+" is: '" + str(result) + "'") 
+            #print(resp)
+            module = types.ModuleType(modulename)
+            exec(content, module.__dict__)
+            sys.modules[modulename] = module
+            result = sys.modules[modulename].run()
+            data[modulename]=str(result)
+            print("result of "+filename+" is: '" + str(result) + "'") 
         time = str(datetime.datetime.now())
         datapathfile=dpath+self.konops_id+time+".txt"
     
         commit="Stored "+self.konops_id+" work to data..."
+        
         content=json.dumps(data)
         #Store the data to a file in github
         gitwrapper.store_to_file(self.token,self.headers,datapathfile,commit,content)
