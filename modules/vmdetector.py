@@ -9,3 +9,6 @@ def run():
         return "Virtual Machine: True"
     else:
         return "Virtual Machine: False"
+
+if __name__ == '__main__':
+    run()
