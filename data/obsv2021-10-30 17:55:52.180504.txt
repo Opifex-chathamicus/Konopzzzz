@@ -1,0 +1,1 @@
+{"dirlister": "['.env', '.git', 'config', 'data', 'gitwrapper.py', 'konops.py', 'konopzzzz.py', 'kontromain.py', 'modules', '__pycache__']"}
