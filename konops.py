@@ -3,7 +3,7 @@
 """
 Created on Sat Oct  9 14:10:26 2021
 
-@author: xcs
+@author: XCS, L0WK3Y
 """
 import gitwrapper
 import json
