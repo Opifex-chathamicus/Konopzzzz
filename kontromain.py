@@ -10,9 +10,8 @@ import konops
 
 def main():
     konopas = konops.Konops("obsv")
+    konopas.install_requirements()
     konopas.configure()
     #konopas.execute()
-    konopas.install_requirements()
-    
 
 main()

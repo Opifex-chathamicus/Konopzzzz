@@ -44,7 +44,7 @@ class Konops :
         response , config_content_json = gitwrapper.get_file_contents(self.token, self.headers, config_file_path)
 
         self.configured = True
-        
+
         config_file_content = json.loads(config_content_json)
         for task in config_file_content:
             #print(task['module'])
@@ -62,8 +62,8 @@ class Konops :
 
     def install_requirements(self):
         self.get_requirements()
-        for library in range(len(self.konops_requirements)-1):
-            subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', self.konops_requirements[library]])
+        for library in range(len(self.konops_requirements)):
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', self.konops_requirements[library]])
         
         
             

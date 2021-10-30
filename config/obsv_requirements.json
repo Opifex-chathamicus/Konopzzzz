@@ -1,5 +1,5 @@
 [
 	{
-		"library":"xlrd"
+		"library":"python-dotenv"
 	}
 ]
