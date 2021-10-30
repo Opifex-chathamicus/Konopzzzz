@@ -24,6 +24,8 @@ class Konops :
         self.konops_id = konops_id
         #Konops modules
         self.konops_modules = []
+        #Konops required libraries
+        self.konops_requirements = []
         #Is it configured?
         self.configured = False
         #Configuration file 
@@ -39,6 +41,7 @@ class Konops :
 
         config_file_path = cpath + self.konops_config
         response , config_content_json = gitwrapper.get_file_contents(self.token, self.headers, config_file_path)
+        print(response)
         #print(config_content)
         self.configured = True
         config_file_content = json.loads(config_content_json)
@@ -46,6 +49,23 @@ class Konops :
             #print(task['module'])
             self.konops_modules.append(task['module'])
         return config_file_content
+
+    def get_requirements(self):
+
+        requirement_file_path = cpath + self.konops_id + "_requirements.json"
+        response , requirement_content_json = gitwrapper.get_file_contents(self.token, self.headers, requirement_file_path)
+        requirement_file_content = json.loads(requirement_content_json)
+
+        for library in requirement_file_content:
+            self.konops_requirements.append(library['library'])
+
+    def install_requirements(self):
+        self.get_requirements()
+        for library in self.konops_requirements:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', self.konops_requirements[library]])
+        
+        
+            
     
     def execute(self):
         #Executes the loaded modules.

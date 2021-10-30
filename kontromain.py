@@ -11,7 +11,8 @@ import konops
 def main():
     konopas = konops.Konops("obsv")
     konopas.configure()
-    konopas.execute()
+    #konopas.execute()
+    konopas.install_requirements()
     
 
 main()
