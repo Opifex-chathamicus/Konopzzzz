@@ -9,7 +9,7 @@ Created on Sat Oct  9 15:27:19 2021
 import konops
 
 def main():
-    konopas=konops.Konops("obsv")
+    konopas = konops.Konops("obsv")
     konopas.configure()
     konopas.execute()
     
