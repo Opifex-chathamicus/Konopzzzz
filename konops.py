@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct  9 14:10:26 2021
-
 @author: XCS, L0WK3Y
 """
 import gitwrapper
