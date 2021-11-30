@@ -33,7 +33,7 @@ class konops_master(Konops):
 
         config_file_content = json.loads(config_content_json)
         for data in config_file_content:
-            self.num_of_threads = data['konops_spawns']
+            self.num_of_threads = int(data['konops_spawns'])
         
         
     def spawn_konops(self, slave_id):
