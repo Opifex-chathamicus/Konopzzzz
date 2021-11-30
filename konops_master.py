@@ -6,34 +6,39 @@
 import gitwrapper
 import random
 import time
-import thread
-import konops
+import threading
+import json
 
-class konops_master:
+from konops import Konops
+from konops_slave import Konops_slave
+
+
+
+class konops_master(Konops):
     def __init__(self, master_id):
+        super().__init__()
         self.master_id = master_id
         self.configured = False
         self.num_of_threads = 0
+        self.spawns = 0
         self.master_config = "%s.json"%self.master_id
 
+        self.token, self.headers = gitwrapper.login()
+
     def configure(self):
-        config_file_path = cpath + self.master_config
+        config_file_path = self.cpath + self.master_config
         response, config_content_json = gitwrapper.get_file_contents(self.token, self.headers, config_file_path)
 
         self.configured = True
 
         config_file_content = json.loads(config_content_json)
         for data in config_file_content:
-            self.num_of_threads = data['konops_number']
-
-    def sleep(self):
-        sleep_time = random.randint(120, 1000)
-        time.sleep(sleep_time)
+            self.num_of_threads = data['konops_spawns']
         
         
     def spawn_konops(self, slave_id):
         try:
-            konopas = konops.Konops(slave_id)
+            konopas = Konops_slave(slave_id)
             konopas.install_requirements()
             konopas.configure()
             konopas.execute()
@@ -43,16 +48,18 @@ class konops_master:
     def manage_konops_threads(self):
         try:
             thread.start_new_thread(spawn_konops, ("obsv"))
-        else:
+            self.spawns += 1
+        except:
             print("Error starting the thread.\n")
 
-    def run_master():
-        while(self.num_of_threads):
+    def run_master(self):
+        while(self.spawns <= self.num_of_threads):
             self.configure()
+            print("here")
             self.manage_konops_threads()
 
 if __name__ == '__main__':
-    master = konops_master.konops_master("master")
-    master.run()
+    master = konops_master("master")
+    master.run_master()
 
 

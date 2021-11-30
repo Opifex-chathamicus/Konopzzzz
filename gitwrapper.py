@@ -14,7 +14,7 @@ API_URL="https://api.github.com"
 
 
 def login():
-    tokenfd = open("data/mytoken.txt",'r')
+    tokenfd = open("./data/mytoken.txt",'r')
     token=tokenfd.readline().strip()
     tokenfd.close()
     headers={
