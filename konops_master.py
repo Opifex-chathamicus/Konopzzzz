@@ -42,12 +42,12 @@ class konops_master(Konops):
             konopas.install_requirements()
             konopas.configure()
             konopas.execute()
-        except:
+        except exception as e:
             print("Error spawning the konops.\n")
 
     def manage_konops_threads(self):
         try:
-            thread.start_new_thread(spawn_konops, ("obsv"))
+            threading.start_new_thread(self.spawn_konops, ("obsv"))
             self.spawns += 1
         except:
             print("Error starting the thread.\n")
@@ -55,7 +55,6 @@ class konops_master(Konops):
     def run_master(self):
         while(self.spawns <= self.num_of_threads):
             self.configure()
-            print("here")
             self.manage_konops_threads()
 
 if __name__ == '__main__':
