@@ -4,5 +4,7 @@
 	},
 	{
 		"module":"environment"
+	},
+	        "module":"process_inspector.py"
 	}
 ]
