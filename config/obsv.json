@@ -5,6 +5,7 @@
 	{
 		"module":"environment"
 	},
-	        "module":"process_inspector.py"
+	{
+	        "module":"process_inspector"
 	}
 ]
