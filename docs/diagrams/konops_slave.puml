@@ -1,0 +1,7 @@
+@startuml
+class konops_slave
+
+konops_slave : configure(self)
+konops_slave : get_requirements(self)
+
+@enduml

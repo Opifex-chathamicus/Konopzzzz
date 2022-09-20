@@ -1,0 +1,40 @@
+@startuml
+class konops_master {
+    Runs a recon, installs basic libs and 
+    deployes the proper worker 
+    with the proper id.
+}
+
+class konops_slave {
+    Runs different modules,
+    based on its id.
+    Probably supports concurrency.
+}
+
+class gitwrapper {
+    Wrapper for the github api.
+}
+
+entity module {
+    Self contained 'malicious' scripts.
+}
+entity library_requirements_json {
+    JSON to install libraries for the modules
+}
+
+entity module_list {
+    A lsit of modules that must run.
+}
+
+
+konops_master --|> konops_slave : Spawns multiple >
+konops_master --> module : Runs >
+konops_slave --> module : Runs >
+gitwrapper *-- konops_master : Uses <
+gitwrapper *-- konops_slave : Uses <
+library_requirements_json *-- konops_master : Reads <
+library_requirements_json *-- konops_slave : Reads <
+module_list *-- konops_master : Reads <
+module_list *-- konops_slave : Reads <
+
+@enduml

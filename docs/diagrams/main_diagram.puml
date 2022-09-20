@@ -1,0 +1,46 @@
+@startuml
+class konops_overseer {
+    Runs a recon, installs basic libs and 
+    deployes the proper worker 
+    with the proper id.
+}
+
+class konops_worker {
+    Runs different modules,
+    based on its id.
+    Probably supports concurrency.
+}
+
+class gitwrapper {
+    Wrapper for the github api.
+}
+
+entity module {
+    Self contained 'malicious' scripts.
+}
+
+entity system_requirements_json {
+    JSON file for the platform's requirements.
+}
+
+entity worker_requirements_json {
+    Specific requirements based on the worker's id.
+}
+
+entity module_list {
+    The list of modules the worker will spawn.
+}
+
+() Data
+
+
+konops_overseer --|> konops_worker : Spawns >
+konops_worker --> module : Runs >
+gitwrapper *-- konops_worker : Uses <
+konops_worker --o worker_requirements_json : Reads >
+konops_worker --o module_list : Reads >
+konops_overseer --o system_requirements_json : Reads >
+konops_worker --> Data : Exports >
+
+
+@enduml
