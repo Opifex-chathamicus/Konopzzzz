@@ -42,5 +42,4 @@ konops_worker --o module_list : Reads >
 konops_overseer --o system_requirements_json : Reads >
 konops_worker --> Data : Exports >
 
-
 @enduml
